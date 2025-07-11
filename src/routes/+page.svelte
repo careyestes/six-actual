@@ -107,7 +107,7 @@
   <div class="video-container">
     <!-- svelte-ignore a11y_media_has_caption -->
     <video class="main-video" width="400" autoplay muted playsinline loop>
-      <source class="video-source" src="assets/video/global-code-development-data-analytics-network-complexities-SBV-348653380-preview.mp4" type="video/mp4">
+      <source class="video-source" src="/assets/video/global-code-development-data-analytics-network-complexities-SBV-348653380-preview.mp4" type="video/mp4">
       Your browser does not support HTML5 video.
     </video>
     <div class="logo-container">
@@ -148,7 +148,7 @@
   <div class="offset-image left">
     <!-- svelte-ignore a11y_media_has_caption -->
     <video class="row-left-video" width="400" autoplay muted playsinline loop>
-      <source class="video-source" src="assets/video/istockphoto-2190567145-640_adpp_is.mp4" type="video/mp4">
+      <source class="video-source" src="/assets/video/istockphoto-2190567145-640_adpp_is.mp4" type="video/mp4">
       Your browser does not support HTML5 video.
     </video>
   </div>
@@ -158,7 +158,7 @@
   </div>
   <div class="offset-image right">
     <video class="row-right-video" width="400" autoplay muted playsinline loop>
-      <source class="video-source" src="assets/video/istockphoto-2218919395-640_adpp_is.mp4" type="video/mp4">
+      <source class="video-source" src="/assets/video/istockphoto-2218919395-640_adpp_is.mp4" type="video/mp4">
       Your browser does not support HTML5 video.
     </video>
   </div>
@@ -214,7 +214,7 @@
 
 <section class="dashboard-video-background">
   <video class="row-left-video" width="400" autoplay muted playsinline loop>
-    <source class="video-source" src="assets/video/blue-futuristic-abstract-digital-device-hi-tech-elements-on-a-circuit-board-ar-SBV-346500290-preview.mp4" type="video/mp4">
+    <source class="video-source" src="/assets/video/blue-futuristic-abstract-digital-device-hi-tech-elements-on-a-circuit-board-ar-SBV-346500290-preview.mp4" type="video/mp4">
     Your browser does not support HTML5 video.
   </video>
   <div class="text-container">
@@ -230,7 +230,7 @@
 
 <footer>
   <video class="row-left-video" width="400" autoplay muted playsinline loop>
-    <source class="video-source" src="assets/video/istockphoto-2185567591-640_adpp_is.mp4" type="video/mp4">
+    <source class="video-source" src="/assets/video/istockphoto-2185567591-640_adpp_is.mp4" type="video/mp4">
     Your browser does not support HTML5 video.
   </video>
   <h2>The time is <span>now.</span></h2>
