@@ -342,13 +342,17 @@
         margin: 0;
       }
       .line {
-        position: absolute;
-        width: 1px;
-        height: 12rem;
-        background: $white;
-        transform: rotate(30deg);
-        left: 20rem; 
-        mix-blend-mode: saturation;
+        display: none;
+        @media screen and (min-width: $breakpoint-max-medium) {
+          display: block;
+          position: absolute;
+          width: 1px;
+          height: 12rem;
+          background: $white;
+          transform: rotate(30deg);
+          left: 20rem; 
+          mix-blend-mode: saturation;
+        }
         &:nth-child(1) {
           left: 20.5rem;
         }
