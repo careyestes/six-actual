@@ -584,49 +584,49 @@
               mix-blend-mode: darken;
             }
             &.bots {
-              background: linear-gradient(181deg, rgba(0, 41, 37, 0.16) 0.71%, rgba(0, 102, 92, 0.16) 99.29%), url("assets/images/istockphoto-2197014958-1024x1024.jpg");
+              background: linear-gradient(181deg, rgba(0, 41, 37, 0.16) 0.71%, rgba(0, 102, 92, 0.16) 99.29%), url("/assets/images/istockphoto-2197014958-1024x1024.jpg");
               background-position: 0 0;
               background-size: cover;
               background-repeat: no-repeat;
             }
             &.model {
-              background: linear-gradient(181deg, rgba(0, 41, 37, 0.16) 0.71%, rgba(0, 102, 92, 0.16) 99.29%), url("assets/images/istockphoto-1224971139-1024x1024.jpg");
+              background: linear-gradient(181deg, rgba(0, 41, 37, 0.16) 0.71%, rgba(0, 102, 92, 0.16) 99.29%), url("/assets/images/istockphoto-1224971139-1024x1024.jpg");
               background-position: 0 0;
               background-size: cover;
               background-repeat: no-repeat;
             }
             &.processing {
-              background: linear-gradient(181deg, rgba(0, 41, 37, 0.16) 0.71%, rgba(0, 102, 92, 0.16) 99.29%), url("assets/images/istockphoto-2182883317-1024x1024.jpg");
+              background: linear-gradient(181deg, rgba(0, 41, 37, 0.16) 0.71%, rgba(0, 102, 92, 0.16) 99.29%), url("/assets/images/istockphoto-2182883317-1024x1024.jpg");
               background-position: 0 0;
               background-size: cover;
               background-repeat: no-repeat;
             }
             &.tasking {
-              background: linear-gradient(181deg, rgba(0, 41, 37, 0.16) 0.71%, rgba(0, 102, 92, 0.16) 99.29%), url("assets/images/istockphoto-1804289230-1024x1024.jpg");
+              background: linear-gradient(181deg, rgba(0, 41, 37, 0.16) 0.71%, rgba(0, 102, 92, 0.16) 99.29%), url("/assets/images/istockphoto-1804289230-1024x1024.jpg");
               background-position: 0 0;
               background-size: cover;
               background-repeat: no-repeat;
             }
             &.humint {
-              background: linear-gradient(181deg, rgba(0, 41, 37, 0.16) 0.71%, rgba(0, 102, 92, 0.16) 99.29%), url("assets/images/istockphoto-2197120164-1024x1024.jpg");
+              background: linear-gradient(181deg, rgba(0, 41, 37, 0.16) 0.71%, rgba(0, 102, 92, 0.16) 99.29%), url("/assets/images/istockphoto-2197120164-1024x1024.jpg");
               background-position: 0 0;
               background-size: cover;
               background-repeat: no-repeat;
             }
             &.sigint {
-              background: linear-gradient(181deg, rgba(0, 41, 37, 0.16) 0.71%, rgba(0, 102, 92, 0.16) 99.29%), url("assets/images/istockphoto-1154752212-1024x1024.jpg");
+              background: linear-gradient(181deg, rgba(0, 41, 37, 0.16) 0.71%, rgba(0, 102, 92, 0.16) 99.29%), url("/assets/images/istockphoto-1154752212-1024x1024.jpg");
               background-position: 0 0;
               background-size: cover;
               background-repeat: no-repeat;
             }
             &.imint {
-              background: linear-gradient(181deg, rgba(0, 41, 37, 0.16) 0.71%, rgba(0, 102, 92, 0.16) 99.29%), url("assets/images/istockphoto-2200130034-1024x1024.jpg");
+              background: linear-gradient(181deg, rgba(0, 41, 37, 0.16) 0.71%, rgba(0, 102, 92, 0.16) 99.29%), url("/assets/images/istockphoto-2200130034-1024x1024.jpg");
               background-position: 0 0;
               background-size: cover;
               background-repeat: no-repeat;
             }
             &.masint {
-              background: linear-gradient(181deg, rgba(0, 41, 37, 0.16) 0.71%, rgba(0, 102, 92, 0.16) 99.29%), url("assets/images/istockphoto-2161502196-1024x1024.jpg");
+              background: linear-gradient(181deg, rgba(0, 41, 37, 0.16) 0.71%, rgba(0, 102, 92, 0.16) 99.29%), url("/assets/images/istockphoto-2161502196-1024x1024.jpg");
               background-position: 0 0;
               background-size: cover;
               background-repeat: no-repeat;
