@@ -106,7 +106,7 @@
 <section>
   <div class="video-container">
     <!-- svelte-ignore a11y_media_has_caption -->
-    <video class="main-video" width="400" autoplay muted playsinline loop>
+    <video class="main-video" width="400" autoplay muted playsinline loop preload="auto">
       <source class="video-source" src="/assets/video/global-code-development-data-analytics-network-complexities-SBV-348653380-preview.mp4" type="video/mp4">
       Your browser does not support HTML5 video.
     </video>
@@ -147,7 +147,7 @@
 <section class="row-images">
   <div class="offset-image left">
     <!-- svelte-ignore a11y_media_has_caption -->
-    <video class="row-left-video" width="400" autoplay muted playsinline loop>
+    <video class="row-left-video" width="400" autoplay muted playsinline loop preload="auto">
       <source class="video-source" src="/assets/video/istockphoto-2190567145-640_adpp_is.mp4" type="video/mp4">
       Your browser does not support HTML5 video.
     </video>
@@ -157,7 +157,7 @@
     <p>By taking a software-first approach, Six Actual delivers mission-ready, rapidly deployable solutions that integrate seamlessly with existing intelligence infrastructure. AI-driven automation will enable real-time intelligence collection, analysis, and response, providing decision-makers with scalable, real-time decision-support tools designed for modern geopolitical and cyber warfare.</p>
   </div>
   <div class="offset-image right">
-    <video class="row-right-video" width="400" autoplay muted playsinline loop>
+    <video class="row-right-video" width="400" autoplay muted playsinline loop preload="auto">
       <source class="video-source" src="/assets/video/istockphoto-2218919395-640_adpp_is.mp4" type="video/mp4">
       Your browser does not support HTML5 video.
     </video>
@@ -213,7 +213,7 @@
 </section>
 
 <section class="dashboard-video-background">
-  <video class="row-left-video" width="400" autoplay muted playsinline loop>
+  <video class="row-left-video" width="400" autoplay muted playsinline loop preload="auto">
     <source class="video-source" src="/assets/video/blue-futuristic-abstract-digital-device-hi-tech-elements-on-a-circuit-board-ar-SBV-346500290-preview.mp4" type="video/mp4">
     Your browser does not support HTML5 video.
   </video>
@@ -229,7 +229,7 @@
 </section>
 
 <footer>
-  <video class="row-left-video" width="400" autoplay muted playsinline loop>
+  <video class="row-left-video" width="400" autoplay muted playsinline loop preload="auto">
     <source class="video-source" src="/assets/video/istockphoto-2185567591-640_adpp_is.mp4" type="video/mp4">
     Your browser does not support HTML5 video.
   </video>
