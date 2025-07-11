@@ -1,0 +1,54 @@
+// Fonts
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Kode+Mono:wght@400..700&display=swap');
+
+$kode: "Kode Mono", monospace;
+$geist: "Geist", sans-serif;
+
+// Colors
+
+//  Green
+$green-400: #92EB9B;
+$green-600: #5A946A;
+$green-800: #12403C;
+
+// Red
+$red-400: #FF0040;
+
+// Blue
+$blue-400: #3F74B1;
+$blue-800: #271240;
+$blue-900: #0E121B;
+
+// Neutrals
+$white: #fff;
+$grey-100: #eee;
+$grey-200: #ddd;
+$black: #000;
+
+// Base / Surface Colors
+$foreground: $grey-200;
+
+$background: $blue-900;
+$background-lines: $black;
+
+// Active Colors
+$primary-active: $green-400;
+$secondary-active: $red-400;
+
+
+// Borders
+$gradient-green: linear-gradient(to bottom, $green-600, $green-800);
+
+$border-radius: 1rem;
+
+
+// Dimensions
+$breakpoint-max-extrasmall: 430px;
+$breakpoint-max-small: 760px;
+$breakpoint-max-medium: 960px;
+$breakpoint-max-large: 1500px;
+$breakpoint-max-extralarge: 2000px;
+
+$text-max-width: 960px;
+$container-max-width: $breakpoint-max-large;
+
