@@ -92,11 +92,11 @@
       }
       button {
         position: absolute;
-        top: calc(100% + 2rem);
+        top: 22rem;
         z-index: 3;
         background: none;
-        width: 2rem;
-        height: 2rem;
+        width: 1.5rem;
+        height: 1.5rem;
         border: 2px solid $primary-active;
         color: $primary-active;
         font-size: 3rem;
@@ -125,7 +125,7 @@
         width: 100%;
         display: flex;
         flex-direction: column;
-        gap: 2rem;
+        gap: 4rem;
         align-items: flex-start;
         padding: 0;
         @media screen and (min-width: $breakpoint-max-medium) {
@@ -183,9 +183,15 @@
     }
 
     .controls {
+      position: absolute;
+      top: 20.8rem;
       display: flex;
       align-items: center;
       gap: 1.5rem;
+      @media screen and (min-width: $breakpoint-max-medium) {
+        position: relative;
+        top: auto;
+      }
       .dots {
         display: flex;
         gap: 0;

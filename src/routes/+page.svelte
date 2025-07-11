@@ -547,7 +547,7 @@
   }
 
   .core-capabilities {
-    margin: 10rem 1rem 2rem;
+    margin: 2rem 1rem 2rem;
     max-width: $container-max-width;
     @media screen and (min-width: $breakpoint-max-medium) {
       margin: 10rem 2rem 2rem;
