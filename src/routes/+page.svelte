@@ -117,6 +117,8 @@
       <h1>Building a Next-Generation Software Company for Information Dominance</h1>
     </div>
     <div class="subheadline">
+      <div class="line"></div>
+      <div class="line"></div>
       <div class="dynamic-intel-container">
         <div class="dynamic-text">
           <div
@@ -338,6 +340,18 @@
         right: 4rem;
         z-index: 1;
         margin: 0;
+      }
+      .line {
+        position: absolute;
+        width: 1px;
+        height: 12rem;
+        background: $white;
+        transform: rotate(30deg);
+        left: 20rem; 
+        mix-blend-mode: saturation;
+        &:nth-child(1) {
+          left: 20.5rem;
+        }
       }
       .dynamic-intel-container {
         display: flex;
