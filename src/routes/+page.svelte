@@ -251,6 +251,8 @@
     display: block; 
     width: 100%;
     height: auto;
+    pointer-events: none;
+    object-fit: cover;
   }
   .max-width {
     max-width: $text-max-width;
