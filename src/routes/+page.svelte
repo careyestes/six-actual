@@ -93,6 +93,10 @@
 
 </script>
 
+<svelte:head>
+    <title>Six Actual | Intelligence Redefined</title>
+</svelte:head>
+
 <section>
   <div class="video-container">
     <!-- svelte-ignore a11y_media_has_caption -->
