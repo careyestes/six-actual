@@ -1,104 +1,94 @@
 <script>
-  import { onMount } from 'svelte';
+  import { onMount, tick } from 'svelte';
   import { cubicOut } from 'svelte/easing';
   import LogoWithText from "$lib/components/LogoWithText.svelte";
   import Logo from "$lib/components/LogoMark.svelte";
   import CaseGallery from '$lib/components/Gallery.svelte';
 
-  const acronyms = ['AI', 'HUM', 'SIG', 'IM', 'MAS'];
-  const phrases = {
-    AI: [
-      'counter-misinformation',
-      'adversarial network mapping',
-      'deepfake detection'
-    ],
-    HUM: [
-      'crowdsourced',
-      'real-time',
-      'intelligence'
-    ],
-    SIG: [
-      'military movements',
-      'GPS jamming',
-      'cyber threats'
-    ],
-    IM: [
-      'track troop buildups',
-      'infrastructure expansion',
-      'economic disruptions'
-    ],
-    MAS: [
-      'nuclear activity',
-      'industrial espionage',
-      'illicit resource extraction'
-    ]
-  };
+  const acronyms = ['Dynamic','Intuitive', 'Predictive', 'Adaptive', 'Dynamic', 'Autonomous'];
+  const displayList = [...acronyms, acronyms[0]];
+
   let currentIndex = 0;
-  let interval;
+  let acronymScrambled = [...displayList];
   let animate = true;
   let viewportWidth = 0;
+  let timer;
 
-  const displayList = [...acronyms, acronyms[0]];
-  let displayedPhrases = phrases[acronyms[currentIndex]];
-  let scrambled = [...displayedPhrases];
-  let wrapper;
-
-  // Scramble effect
-  function scrambleText(original, index) {
+  function randomizedFrom(original) {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let iterations = 0;
-    const maxIterations = 10;
+    return original.split('').map(() => chars[Math.floor(Math.random() * chars.length)]).join('');
+  }
 
-    const interval = setInterval(() => {
-      scrambled[index] = original
+  // Immediate scramble, then animate into the real text
+  function scrambleInto(original, index) {
+    let iterations = 0;
+    const maxIterations = original.length + 1;
+
+    // Set an immediate scrambled frame so there is no flash of the real word
+    acronymScrambled[index] = randomizedFrom(original);
+
+    const iv = setInterval(() => {
+      acronymScrambled[index] = original
         .split('')
-        .map((char, i) =>
-          i < iterations ? char : chars[Math.floor(Math.random() * chars.length)]
-        )
+        .map((char, i) => (i < iterations ? char : randomizedFrom('a').charAt(0)))
         .join('');
 
       iterations++;
-      if (iterations > original.length) {
-        scrambled[index] = original;
-        clearInterval(interval);
+      if (iterations > maxIterations) {
+        acronymScrambled[index] = original;
+        clearInterval(iv);
       }
-    }, 30);
+    }, 65);
+  }
+
+  function preScramble(index) {
+    scrambleInto(displayList[index], index);
   }
 
   function advance() {
+    const next = currentIndex + 1;
+
+    // Pre-scramble the item that is about to slide in
+    if (next < displayList.length) {
+      preScramble(next);
+    }
+
     animate = true;
-    currentIndex += 1;
+    currentIndex = next;
 
     if (currentIndex === acronyms.length) {
-      // Show the clone acronym (no need to update phrases)
-      setTimeout(() => {
+      // We are showing the cloned last item. Pre-scramble index 0
+      preScramble(0);
+
+      // After the transition, snap back to 0 without animation
+      setTimeout(async () => {
         animate = false;
         currentIndex = 0;
-        displayedPhrases = phrases[acronyms[0]];
-        scrambled = [...displayedPhrases];
-        scrambled.forEach((_, i) => scrambleText(displayedPhrases[i], i));
-      }, 250); // matches transition time
-    } else {
-      displayedPhrases = phrases[acronyms[currentIndex]];
-      scrambled = [...displayedPhrases];
-      scrambled.forEach((_, i) => scrambleText(displayedPhrases[i], i));
+        await tick(); // let DOM update with the snapped position
+      }, 250); // match your slide transition
     }
   }
 
   onMount(() => {
-    // For grabbing viewport to swap height animation
     viewportWidth = window.innerWidth;
-    window.addEventListener("resize", () => {
-      viewportWidth = window.innerWidth;
-    });
-    // To kick the advance animation
-    scrambled.forEach((_, i) => scrambleText(displayedPhrases[i], i));
-    const interval = setInterval(advance, 3000); // pause for 3s per acronym
-    return () => clearInterval(interval);
+    const onResize = () => (viewportWidth = window.innerWidth);
+    window.addEventListener('resize', onResize);
+
+    // Pre-scramble what is currently visible and the next item
+    preScramble(0);
+    preScramble(1);
+
+    timer = setInterval(advance, 3000);
+
+    return () => {
+      window.removeEventListener('resize', onResize);
+      clearInterval(timer);
+    };
   });
 
+
   $: translateValue = animate
-    ? `translateY(-${currentIndex * (viewportWidth < 960 ? 80 : 192)}px)`
+    ? `translateY(-${currentIndex * (viewportWidth < 430 ? 64 : viewportWidth < 760 ? 96 : viewportWidth < 960 ? 112 : viewportWidth < 1500 ? 144 : 192)}px)`
     : 'translateY(0)';
 
 </script>
@@ -113,101 +103,115 @@
     <div class="logo-container">
       <LogoWithText />
     </div>
-    <div class="headline">
-      <h1>Building a Next-Generation Software Company for Information Dominance</h1>
-    </div>
     <div class="subheadline">
-      <div class="line"></div>
-      <div class="line"></div>
       <div class="dynamic-intel-container">
         <div class="dynamic-text">
-          <div
-            bind:this={wrapper}
-            class="acronym-wrapper"
-            style=" transform: {translateValue}; transition: {animate ? 'transform 0.25s ease-in-out' : 'none'};">
-            {#each displayList as acronym}
-              <div class="acronym">{acronym}</div>
+          <div 
+            class="acronym-roller" 
+            style="
+              transform: {translateValue}; 
+              transition: {animate ? 'transform 0.25s ease-in-out' : 'none'};
+            ">
+            {#each displayList as acronym, i}
+              <div class="acronym">{acronymScrambled[i]}</div>
             {/each}
           </div>
         </div>
-        <div class="static-text">INT</div>
+        <div class="lines">
+          <div class="line"></div>
+          <div class="line"></div>
+          <div class="line"></div>
+          <div class="line"></div>
+          <div class="line"></div>
+          <div class="line"></div>
+          <div class="line"></div>
+          <div class="line"></div>
+          <div class="line"></div>
+          <div class="line"></div>
+        </div>
+        <div class="static-text">
+          <div>Intelligence Redefined</div>
+          <small>Powered by AI</small>
+        </div>
       </div>
-      <ul class="phrase-list">
-        {#each scrambled as phrase}
-          <li>{phrase}</li>
-        {/each}
-      </ul>
     </div>
   </div>
 </section>
 
 <section class="pitch-text">
-  <p class="max-width">In a world where adversaries exploit AI, misinformation, and digital networks to undermine national security, intelligence agencies and private-sector firms require an autonomous, AI-driven intelligence solution to maintain an operational advantage.</p>
-  <h2>Six Actual<br /> is the <span class="text-color-red">solution.</span></h2>
+  <!-- svelte-ignore a11y_media_has_caption -->
+  <video autoplay muted playsinline loop preload="auto">
+    <source class="video-source" src="/assets/video/istockphoto-2209705526-640_adpp_is.mp4" type="video/mp4">
+    Your browser does not support HTML5 video.
+  </video>
+  <div class="headline">
+    <h1>
+      <small>Welcome to the</small>
+      <div class="shine-wrap">
+        <span class="text-color-red">New Era of Intel</span>
+        <span class="overlay-stroke" aria-hidden="true">New Era of Intel</span>
+      </div>
+    </h1>
+  </div>
+    <p class="max-width">In a rapidly evolving digital landscape, traditional intelligence methods fall short against emerging threats. Six Actual is pioneering the next generation of AI-driven intelligence tools designed to give both national security agencies and commercial enterprises the competitive edge.</p>
 </section>
 
-<section class="row-images">
-  <div class="offset-image left">
-    <!-- svelte-ignore a11y_media_has_caption -->
-    <video class="row-left-video" width="400" autoplay muted playsinline loop preload="auto">
-      <source class="video-source" src="/assets/video/istockphoto-2190567145-640_adpp_is.mp4" type="video/mp4">
-      Your browser does not support HTML5 video.
-    </video>
-  </div>
-  <div class="text-column">
-    <p>Six Actual develops AI-powered intelligence operations, realtime data analytics, and automated collection tasking to enhance national security and commercial intelligence capabilities.</p>
-    <p>By taking a software-first approach, Six Actual delivers mission-ready, rapidly deployable solutions that integrate seamlessly with existing intelligence infrastructure. AI-driven automation will enable real-time intelligence collection, analysis, and response, providing decision-makers with scalable, real-time decision-support tools designed for modern geopolitical and cyber warfare.</p>
-  </div>
-  <div class="offset-image right">
-    <video class="row-right-video" width="400" autoplay muted playsinline loop preload="auto">
-      <source class="video-source" src="/assets/video/istockphoto-2218919395-640_adpp_is.mp4" type="video/mp4">
-      Your browser does not support HTML5 video.
-    </video>
+<section class="why">
+  <h2>Why Six Actual<span class="text-color-red">?</span></h2>
+  <div class="row-images">
+    <div class="offset-image left">
+      <!-- svelte-ignore a11y_media_has_caption -->
+      <video class="row-left-video" width="400" autoplay muted playsinline loop preload="auto">
+        <source class="video-source" src="/assets/video/istockphoto-2190567145-640_adpp_is.mp4" type="video/mp4">
+        Your browser does not support HTML5 video.
+      </video>
+    </div>
+    <div class="text-column">
+      <p>Our software-first approach transforms how intelligence is collected and analyzed. We leverage advanced artificial intelligence to provide rapid insights, predictive threat detection, and real-time decision support—exactly when it's needed most.</p>
+    </div>
+    <div class="offset-image right">
+      <video class="row-right-video" width="400" autoplay muted playsinline loop preload="auto">
+        <source class="video-source" src="/assets/video/istockphoto-2218919395-640_adpp_is.mp4" type="video/mp4">
+        Your browser does not support HTML5 video.
+      </video>
+    </div>
   </div>
 </section>
 
 <section class="core-capabilities">
-  <h2>Core Capabilities</h2>
+  <h2>Core Capabilities<span class="text-color-red">.</span></h2>
   <div class="flexed-columns">
     <div class="column column-left">
       <p>Ops and Automation</p>
       <ul>
         <li class="bots">
-          <h3>Autonomous Bots</h3>
-          <p>Counter-misinformation, adversarial network mapping, and deepfake detection to combat influence operations</p>
+          <h3>Influence Operation Defense</h3>
+          <p>Identify and counteract misinformation and deepfakes proactively</p>
         </li>
         <li class="model">
-          <h3>Predictive Threat Modeling</h3>
-          <p>Leveraging AI-powered analytics to forecast emerging cyber and geopolitical risks</p>
+          <h3>Predictive Analytics</h3>
+          <p>Anticipate cyber and geopolitical risks before they become threats</p>
         </li>
         <li class="processing">
-          <h3>Real-Time Intelligence Processing</h3>
-          <p>Autonomously collect and analyze OSINT,SIGINT, IMINT, and MASINT</p>
-        </li>
-        <li class="tasking">
-          <h3>Adaptive AI Tasking</h3>
-          <p>Automated sensor deployment, ensuring comprehensive intelligence coverage</p>
+          <h3>Real-Time Insights</h3>
+          <p>Instant analysis of diverse intelligence sources to support agile decision-making</p>
         </li>
       </ul>
     </div>
     <div class="column column-right">
-      <p>Integration</p>
+      <p>AI Integration</p>
       <ul>
         <li class="humint">
-          <h3>HUMINT</h3>
-          <p>Gig economy networks provide crowdsourced real-time intelligence from conflict zones, protests, and supply chains</p>
+          <h3>Network Intelligence:</h3>
+          <p>Leverage global data streams to maintain situational awareness.</p>
         </li>
         <li class="sigint">
-          <h3>SIGINT</h3>
-          <p>AI-driven RF signal detection enables tracking of military movements, GPS jamming, and cyber threats</p>
-        </li>
-        <li class="imint">
-          <h3>IMINT</h3>
-          <p>Commercial satellite imagery and AI-powered pattern recognition track troop buildups, infrastructure expansion, and economic disruptions</p>
+          <h3>Sensor Intelligence</h3>
+          <p>AI-driven deployment ensures broad-spectrum coverage across critical intelligence domains</p>
         </li>
         <li class="masint">
-          <h3>MASINT</h3>
-          <p>AI-powered environmental sensors detect nuclear activity, industrial espionage, and illicit resource extraction</p>
+          <h3>Cognitive Fusion</h3>
+          <p>Seamlessly combine multisource intelligence into unified, actionable insights for faster strategic decisions</p>
         </li>
       </ul>
     </div>
@@ -225,19 +229,17 @@
   </div>
 </section>
 
-<section class="case-studies">
-  <h2>Case Studies</h2>
-  <CaseGallery />
-</section>
-
 <footer>
   <video class="row-left-video" width="400" autoplay muted playsinline loop preload="auto">
-    <source class="video-source" src="/assets/video/istockphoto-2185567591-640_adpp_is.mp4" type="video/mp4">
+    <source class="video-source" src="/assets/video/istockphoto-2156008821-640_adpp_is.mp4" type="video/mp4">
     Your browser does not support HTML5 video.
   </video>
-  <h2>The time is <span>now.</span></h2>
-  <p class="max-width">The intelligence industry is undergoing a seismic shift—from classified, slow-moving intelligence models to real-time, AI-powered commercial and open-source intelligence networks.</p>
-  <p class="max-width">Six Actual is positioned to be the leading AI-powered intelligence provider, integrating autonomous AI tasking, commercial sensor data, and real-time predictive analytics to deliver unmatched intelligence solutions for national security and financial markets. The future of intelligence is real-time, AI-driven, and market-responsive—and this company is built to lead that transformation. The time to now.</p>
+  <h2>
+    <span>Transforming</span> 
+    <span>Intelligence</span>
+  </h2>
+  <p class="max-width">The future demands intelligence that’s adaptive, real-time, and actionable. Six Actual leads this transformation, enabling organizations to stay ahead of threats and seize strategic opportunities.</p>
+  <h3 class="max-width">Explore what real-time, AI-driven intelligence can do for you<span class="text-color-red">.</span></h3>
   <div class="citation">
     <Logo />
     <small>© 2025 Six Actual</small>
@@ -258,6 +260,7 @@
     max-width: $text-max-width;
     margin: 0 auto;
   }
+
   .video-container {
     position: relative;
     z-index: 0;
@@ -302,160 +305,341 @@
     }
     .logo-container {
       position: absolute;
-      top: 10%;
+      top: 12%;
       left: 50%;
       z-index: 1;
       width: 50%;
       transform: translate(-50%, 0);
       @media screen and (min-width: $breakpoint-max-medium) {
-        top: 1rem;
-        left: 1rem;
-        width: 18%;
+        top: 4rem;
+        left: 0;
+        right: 0; 
+        width: 14%;
+        margin: 0 auto;
         transform: translate(0, 0);
       }
 
     }
-    .headline {
-      margin: 1rem;
-      @media screen and (min-width: $breakpoint-max-medium) {
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
-        left: auto;
-        z-index: 1;
-        width: calc(82% - 2rem);
-        max-width: 50rem;
-        margin: 0 0;
-        text-align: right;
-        text-shadow: 0 0 2rem $black;
-      }
-      h1 {
-        font-size: var(--fluid-2);
-        line-height: var(--fluid-3);
-      }
-    }
     .subheadline {
-      margin: 2rem 0;
+      margin: 3rem 2rem;
       @media screen and (min-width: $breakpoint-max-medium) {
         position: absolute;
-        top: 40%;
-        right: 4rem;
+        top: auto;
+        bottom: 0;
+        right: 0;
+        left: 0;
         z-index: 1;
-        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
       }
-      .line {
-        display: none;
-        @media screen and (min-width: $breakpoint-max-medium) {
-          display: block;
-          position: absolute;
-          width: 1px;
-          height: 12rem;
-          background: $white;
-          transform: rotate(30deg);
-          left: 20rem; 
-          mix-blend-mode: saturation;
-        }
-        &:nth-child(1) {
-          left: 20.5rem;
-        }
+      @media screen and (min-width: $breakpoint-max-large) {
+        top: 40%;
+        bottom: auto;
+        max-width: 94rem;
       }
+      
       .dynamic-intel-container {
         display: flex;
+        flex-direction: column;
         justify-content: center;
-        height: 5rem;
-        font-size: var(--fluid-7);
+        gap: 1rem;
+        height: auto;
         font-weight: 900;
         line-height: normal;
         @media screen and (min-width: $breakpoint-max-medium) {
+        }
+        @media screen and (min-width: $breakpoint-max-large) {
+          flex-direction: row;
           height: 12rem;
           text-align: right;
-          justify-content: right;
+          justify-content: center;
         }
 
         .dynamic-text {
-          overflow: hidden;
-          height: 5rem;
           position: relative;
-          @media screen and (min-width: $breakpoint-max-medium) {
-            width: 20rem;
-            height: 12rem;
+          flex: 0 0 4rem;
+          overflow: hidden;
+          @media screen and (min-width: $breakpoint-max-extrasmall) {
+            flex: 0 0 6rem;
           }
-          .acronym-wrapper {
+          @media screen and (min-width: $breakpoint-max-small) {
+            flex: 0 0 7rem;
+          }
+          @media screen and (min-width: $breakpoint-max-medium) {
+            flex: 0 0 9rem;
+          }
+          @media screen and (min-width: $breakpoint-max-large) {
+            position: relative;
+            z-index: 1;
+            flex: 0 0 auto;
+            height: 13rem;
+            font-size: calc(var(--fluid-7) + 1rem);
+            letter-spacing: -0.25rem;
+            text-align: right;
+            transform: translate(0rem, -1rem);
+          }
+          .acronym-roller {
             display: flex;
             flex-direction: column;
           }
-
+          
           .acronym {
-            height: 5rem;
+            // height: 8rem;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             color: $secondary-active;
-            justify-content: center;
+            justify-content: flex-start;
+            font-size: 3rem;
+            line-height: 4rem;
+            @media screen and (min-width: $breakpoint-max-extrasmall) {
+              font-size: 4rem;
+              line-height: 6rem;
+            }
+            @media screen and (min-width: $breakpoint-max-small) {
+              font-size: 6rem;
+              line-height: 7rem;
+            }
             @media screen and (min-width: $breakpoint-max-medium) {
+              justify-content: center;
+              font-size: 8rem;
+              line-height: 9rem;
+            }
+            @media screen and (min-width: $breakpoint-max-large) {
+              align-items: center;
               justify-content: flex-end;
               height: 12rem;
+              text-shadow: 0 0.2rem 0.2rem $green-800;
             }
           }
         }
 
-        .static-text {
-          display: flex;
-          align-items: center;
-          @media screen and (min-width: $breakpoint-max-medium) {
-            margin-left: 1rem;
+        .lines {
+          position: relative;
+          z-index: 0;
+          flex: 0 0 auto;
+          .line {
+            display: none;
+            @media screen and (min-width: $breakpoint-max-large) {
+              position: absolute;
+              top: -3rem;
+              display: block;
+              width: 1px;
+              height: 18rem;
+              background: $white;
+              transform: rotate(44deg);
+              margin: 0 auto; 
+              mix-blend-mode: saturation;
+            }
+            &:nth-child(1) {
+              transform: translate(-2rem, 0) rotate(44deg);
+              opacity: 0.10;
+            }
+            &:nth-child(2) {
+              transform: translate(-1.5rem, 0) rotate(44deg);
+              opacity: 0.25;
+            }
+            &:nth-child(3) {
+              transform: translate(-1rem, 0) rotate(44deg);
+              opacity: 0.5;
+            }
+            &:nth-child(4) {
+              transform: translate(-0.5rem, 0) rotate(44deg);
+              opacity: 0.75;
+            }
+            &:nth-child(5) {
+              transform: translate(0rem, 0) rotate(44deg);
+              opacity: 1;
+            }
+            &:nth-child(6) {
+              transform: translate(0.5rem, 0) rotate(44deg);
+              opacity: 1;
+            }
+            &:nth-child(7) {
+              transform: translate(1rem, 0) rotate(44deg);
+              opacity: 0.75;
+            }
+            &:nth-child(8) {
+              transform: translate(1.5rem, 0) rotate(44deg);
+              opacity: 0.5;
+            }
+            &:nth-child(9) {
+              transform: translate(2rem, 0) rotate(44deg);
+              opacity: 0.25;
+            }
+            &:nth-child(10) {
+              transform: translate(2.5rem, 0) rotate(44deg);
+              opacity: 0.10;
+            }
           }
         }
+        
+        .static-text {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          flex: 0 0 auto;
+          margin: 0;
+          font-size: var(--fluid-5);
+          line-height: var(--fluid-5);
+          @media screen and (min-width: $breakpoint-max-medium) {
+            align-items: center;
+            font-size: var(--fluid-4);
+            line-height: var(--fluid-5);
+          }
+          @media screen and (min-width: $breakpoint-max-large) {
+            position: relative;
+            z-index: 1;
+            flex: 1 1 auto;
+            align-items: flex-start;
+            justify-content: center;
+            margin: 0 0 0 1rem;
+            padding: 0 0 0 0;
+            font-size: var(--fluid-5);
+            line-height: var(--fluid-5);
+            text-align: left;
+            text-shadow: 0 0.2rem 0.2rem $green-800;
+            // transform: translate(-6rem, 6rem);
+          }
+          div {
+            @media screen and (min-width: $breakpoint-max-medium) {
+              margin: 0 auto;
+              text-align: center;
+            }
+            @media screen and (min-width: $breakpoint-max-large) {
+              margin: 0;
+              text-align: left;
+            }
+          }
+          small {
+            font-family: $geist;
+            font-size: var(--fluid-1);
+            font-weight: 900;
+            letter-spacing: 0.25rem;
+            line-height: var(--fluid-3);
+            text-transform: uppercase;
+            text-shadow: 0 0.2rem 0.2rem $green-800;
+            @media screen and (min-width: $breakpoint-max-medium) {
 
-        .phrase-list {
-          margin-top: 1rem;
-          font-family: monospace;
-          font-size: 1.25rem;
-          list-style: none;
-          padding: 0;
-        }
-
-        .phrase-list li {
-          line-height: 1.6;
-        }
-      }
-      ul {
-        padding: 0;
-        font-size: var(--fluid-0);
-        line-height: var(--fluid-1);
-        line-height: 2rem;
-        list-style: none;
-        text-align: center;
-        text-shadow: 0 0.2rem 0.2rem $black;
-        @media screen and (min-width: $breakpoint-max-medium) {
-          padding-right: 2rem;
-          font-size: var(--fluid-1);
-        line-height: var(--fluid-2);
-          text-align: right;
+            }
+            @media screen and (min-width: $breakpoint-max-large) {
+              font-size: var(--fluid-2);
+              letter-spacing: 0.5rem;
+              text-align: left;
+            }
+          }
         }
       }
     }
+  }
 
+  .headline {
+    position: relative;
+    margin: 1rem 2rem;
+    z-index: 1;
+    @media screen and (min-width: $breakpoint-max-medium) {
+      margin: 0 auto;
+      padding: 0rem 10rem 4rem; 
+      text-align: center;
+      // text-shadow: 0 0 2rem $black;
+    }
+    @media screen and (min-width: $breakpoint-max-large) {
+      padding: 0rem 20rem 4rem; 
+    }
+    h1 {
+      display: flex;
+      flex-direction: column;
+      font-size: var(--fluid-3);
+      line-height: var(--fluid-4);
+      @media screen and (min-width: $breakpoint-max-medium) {
+        font-size: var(--fluid-7);
+        line-height: var(--fluid-7);
+      }
+      small {
+        font-size: var(--fluid-2);
+        line-height: var(--fluid-2);
+        @media screen and (min-width: $breakpoint-max-large) {
+          font-size: var(--fluid-5);
+          line-height: var(--fluid-6);
+        }
+      }
+      .shine-wrap {
+        position: relative;
+        display: inline-block;
+      }
+
+      .overlay-stroke {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        color: transparent;
+        -webkit-text-fill-color: transparent;
+        -webkit-text-stroke: 2px transparent;
+        background-image: linear-gradient(
+          40deg,
+          rgba(255,0,64,0) 0%,
+          rgba(255,0,64,0) 40%,
+          rgba(255,127,127,0.8) 50%,
+          rgba(255,0,64,0) 60%,
+          rgba(255,0,64,0) 100%
+        );
+        background-size: 200% 100%;
+        background-position: -20% 0;
+        -webkit-background-clip: text;
+        opacity: 0.9;
+        animation: shine 8s ease-in-out infinite;
+      }
+
+      @keyframes shine {
+        0%   { background-position: -20% 0; }
+        100% { background-position: 120% 0; }
+      }
+    }
   }
 
   .pitch-text {
+    position: relative;
+    video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 0;
+      width: 100%;
+      height: auto;
+      margin: 0 auto;
+      object-fit: cover;
+      mix-blend-mode: color-dodge;
+      filter: hue-rotate(210deg) opacity(0.6) blur(3px) grayscale(0.5);
+    }
     p {
-      margin: 0 1rem;
+      position: relative;
+      z-index: 1;
+      margin: 0 2rem;
       font-size: var(--fluid-0);
       line-height: calc(var(--fluid-2) + 0.2rem);
-      @media screen and (min-width: $breakpoint-max-medium) {
-        margin: 0 auto;
+      @media screen and (min-width: $breakpoint-max-medium ){
+        margin: 0 2rem;
         font-size: var(--fluid-1);
+        line-height: var(--fluid-3);
+      }
+      @media screen and (min-width: $breakpoint-max-large) {
+        margin: 0 auto;
       }
     }
+  }
+
+  .why {
     h2 {
-      margin: var(--fluid-4) 1rem;
-      font-size: var(--fluid-5);
-      line-height: var(--fluid-6);
+      max-width: $container-max-width;
+      margin: 8rem auto 2rem;
+      font-size: var(--fluid-4);
+      line-height: var(--fluid-5);
       text-align: center;
       @media screen and (min-width: $breakpoint-max-medium) {
-        margin: var(--fluid-4) auto;
         font-size: var(--fluid-6);
-        line-height: var(--fluid-6);
+        line-height: var(--fluid-7);
       }
     }
   }
@@ -470,7 +654,7 @@
     div {
       flex: 1 1 20rem;
       @media screen and (min-width: $breakpoint-max-medium) {
-        flex: 1 1 30%;
+        flex: 1 1 20%;
       }
       &.text-column {
         flex: 1 1 auto;
@@ -482,6 +666,17 @@
           margin: 0;
           font-size: var(--fluid-0);
           line-height: var(--fluid-1);
+        }
+        p {
+          margin: 0 1rem;
+          font-size: var(--fluid-0);
+          line-height: calc(var(--fluid-2) + 0.2rem);
+          @media screen and (min-width: $breakpoint-max-medium) {
+            margin: 0 auto;
+            padding: 1rem 0;
+            font-size: var(--fluid-1);
+            line-height: var(--fluid-3);
+          }
         }
       }
     }
@@ -751,28 +946,29 @@
 
   footer {
     position: relative;
-    margin: 4rem 0 0;
+    margin: 0 0 0;
     padding: 4rem 0;
-    border-top: 0.5rem solid $green-600;
     overflow: hidden;
     @media screen and (min-width: $breakpoint-max-medium) {
-      margin: 10rem 0 0;
+      margin: 0 0 0;
     }
     video {
       position: absolute;
-      top: 50%;
-      left: 50%;
+      // top: 50%;
+      // left: 50%;
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transform: translate(-50%, -50%) scale(1.3);
+      transform: translate(0%, 0%) scale(1.3);
       transform-origin: top left;
       z-index: -1;
       pointer-events: none;
       mix-blend-mode: color-dodge;
-      filter: hue-rotate(-30deg);
+      filter: hue-rotate(-30deg) opacity(0.3);
     }
     h2 {
+      display: flex;
+      flex-direction: column;
       margin: 0 0 2rem;
       font-size: var(--fluid-5);
       line-height: var(--fluid-6);
@@ -781,9 +977,11 @@
         font-size: var(--fluid-6);
         line-height: var(--fluid-7);
       }
-      span {
-        color: $red-400;
-      }
+    }
+    h3 {
+      padding: 0 1rem;
+      font-size: var(--fluid-3);
+      line-height: var(--fluid-4);
     }
     p.max-width {
       margin: 2rem 1rem;
