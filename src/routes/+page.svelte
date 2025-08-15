@@ -757,6 +757,7 @@
     h2 {
       font-size: var(--fluid-4);
       line-height: var(--fluid-5);
+      text-align: center;
       @media screen and (min-width: $breakpoint-max-medium) {
         font-size: var(--fluid-6);
         line-height: var(--fluid-7);
