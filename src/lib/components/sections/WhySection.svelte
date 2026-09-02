@@ -8,6 +8,8 @@
       <DecorativeVideo
         class="row-left-video"
         src="/assets/video/why-autonomous.mp4"
+        poster="/assets/video/why-autonomous-poster.jpg"
+        priority={2}
       />
     </div>
     <div class="text-column">
@@ -25,6 +27,8 @@
       <DecorativeVideo
         class="row-right-video"
         src="/assets/video/why-accountable.mp4"
+        poster="/assets/video/why-accountable-poster.jpg"
+        priority={3}
       />
     </div>
   </div>
@@ -149,17 +153,23 @@
         }
       }
 
-      :global(video) {
+      :global(.decorative-media) {
         display: block;
         position: absolute;
         top: 50%;
         left: 50%;
         width: 100%;
         height: 100%;
-        object-fit: cover;
         transform: translate(-50%, -50%);
         z-index: -1;
         pointer-events: none;
+      }
+
+      :global(.decorative-media .poster),
+      :global(.decorative-media video) {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
       }
     }
   }

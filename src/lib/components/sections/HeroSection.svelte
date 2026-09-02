@@ -113,7 +113,7 @@
       class="main-video"
       src="/assets/video/hero-data-network.mp4"
       poster="/assets/video/hero-data-network-poster.jpg"
-      eager
+      priority={0}
     />
     <div class="logo-container">
       <LogoWithText />
@@ -151,12 +151,11 @@
 <style lang="scss">
   @use '../../styles/variables.scss' as *;
 
-  .video-container :global(video) {
+  .video-container :global(.decorative-media) {
     display: block;
     width: 100%;
     height: auto;
     pointer-events: none;
-    object-fit: cover;
   }
 
   .video-container {

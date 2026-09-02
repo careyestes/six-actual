@@ -7,6 +7,8 @@
   <DecorativeVideo
     class="row-left-video"
     src="/assets/video/footer-trusted-decisions.mp4"
+    poster="/assets/video/footer-trusted-decisions-poster.jpg"
+    priority={4}
   />
   <h2>
     <small>What we're building doesn't just inform decisions.</small>
@@ -34,19 +36,25 @@
     padding: 4rem 0;
     overflow: hidden;
 
-    :global(video) {
+    :global(.decorative-media) {
       display: block;
       position: absolute;
       top: 0;
       width: 100%;
       height: 100%;
-      object-fit: cover;
       transform: translate(0%, 0%) scale(1.3);
       transform-origin: top left;
       z-index: -1;
       pointer-events: none;
       mix-blend-mode: color-dodge;
       filter: hue-rotate(-30deg) opacity(0.3);
+    }
+
+    :global(.decorative-media .poster),
+    :global(.decorative-media video) {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
 
     h2 {
@@ -76,7 +84,7 @@
       gap: 2rem;
       margin: 10rem 0 0;
       text-align: center;
-      svg {
+      :global(svg) {
         mix-blend-mode: hard-light;
       }
     }

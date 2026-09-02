@@ -3,7 +3,11 @@
 </script>
 
 <section class="pitch-text">
-  <DecorativeVideo src="/assets/video/pitch-agentic-analytics.mp4" />
+  <DecorativeVideo
+    src="/assets/video/pitch-agentic-analytics.mp4"
+    poster="/assets/video/pitch-agentic-analytics-poster.jpg"
+    priority={1}
+  />
   <div class="headline">
     <h1>
       <small>Most analytics tells you what happened.</small>
@@ -73,7 +77,7 @@
   .pitch-text {
     position: relative;
 
-    :global(video) {
+    :global(.decorative-media) {
       display: block;
       position: absolute;
       top: 0;
@@ -84,7 +88,6 @@
       height: auto;
       margin: 0 auto;
       pointer-events: none;
-      object-fit: cover;
       mix-blend-mode: color-dodge;
       filter: hue-rotate(210deg) opacity(0.6) blur(3px) grayscale(0.5);
     }

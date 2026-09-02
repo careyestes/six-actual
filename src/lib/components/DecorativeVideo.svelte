@@ -1,6 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { prefersReducedMotion } from '$lib/prefersReducedMotion.js';
+	import { waitForVideoTurn, releaseVideoTurn } from '$lib/videoLoadQueue.js';
 
 	/** @type {string} */
 	export let src = '';
@@ -8,87 +9,165 @@
 	export let poster = '';
 	/** @type {number} */
 	export let width = 400;
-	/** When true, preload and play immediately (hero). Otherwise lazy-load on scroll. */
-	export let eager = false;
+	/**
+	 * DOM load order. Lower loads first.
+	 * 0 = hero (always first), higher = later sections, footer last.
+	 * @type {number}
+	 */
+	export let priority = 99;
 	let className = '';
 	export { className as class };
 
+	$: isHero = priority === 0;
+
 	let videoEl;
-	let shouldLoad = eager;
+	let shouldLoad = false;
+	let videoReady = false;
+	let released = false;
 
-	function syncPlayback(reduced) {
-		if (!videoEl || !shouldLoad) return;
-
-		if (reduced) {
-			videoEl.pause();
-		} else {
-			videoEl.play().catch(() => {});
-		}
+	function releaseOnce() {
+		if (released) return;
+		released = true;
+		releaseVideoTurn(priority);
 	}
 
-	function startLazyLoad(reduced) {
+	function syncPlayback(reduced) {
+		if (!videoEl || !shouldLoad || reduced) return;
+		videoEl.play().catch(() => {});
+	}
+
+	async function beginLoad() {
 		shouldLoad = true;
-		// Re-bind source then load/play after DOM update
-		queueMicrotask(() => {
-			if (!videoEl) return;
-			videoEl.load();
-			syncPlayback(reduced);
-		});
+		await Promise.resolve();
+		if (!videoEl) return;
+		videoEl.load();
+		syncPlayback(false);
+	}
+
+	function onVideoReady() {
+		videoReady = true;
+	}
+
+	function onCanPlay() {
+		videoReady = true;
+		releaseOnce();
 	}
 
 	onMount(() => {
 		const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-		const unsubscribeMotion = prefersReducedMotion.subscribe(syncPlayback);
 
-		if (eager) {
-			syncPlayback(reduced);
+		const unsubscribeMotion = prefersReducedMotion.subscribe((isReduced) => {
+			if (isReduced) {
+				videoEl?.pause();
+				releaseOnce();
+				return;
+			}
+			if (shouldLoad) {
+				syncPlayback(false);
+			}
+		});
+
+		if (reduced) {
+			releaseOnce();
 			return unsubscribeMotion;
 		}
 
-		const observer = new IntersectionObserver(
-			(entries) => {
-				for (const entry of entries) {
-					if (!entry.isIntersecting) continue;
-					startLazyLoad(reduced);
-					observer.disconnect();
-					break;
-				}
-			},
-			{ rootMargin: '200px 0px' }
-		);
+		let cancelled = false;
 
-		observer.observe(videoEl);
+		(async () => {
+			await waitForVideoTurn(priority);
+			if (cancelled) return;
+			await beginLoad();
+		})();
 
 		return () => {
-			observer.disconnect();
+			cancelled = true;
+			releaseOnce();
 			unsubscribeMotion();
 		};
 	});
 </script>
 
-<!-- svelte-ignore a11y_media_has_caption -->
-<video
-	bind:this={videoEl}
-	class={className}
-	{width}
-	poster={poster || null}
-	autoplay={eager && !$prefersReducedMotion}
-	muted
-	playsinline
-	loop={!$prefersReducedMotion}
-	preload={$prefersReducedMotion ? 'metadata' : eager ? 'auto' : 'none'}
+<div
+	class="decorative-media {className}"
+	class:ready={videoReady}
 	aria-hidden="true"
 >
-	{#if shouldLoad}
-		<source {src} type="video/mp4" />
+	{#if poster}
+		<img
+			class="poster"
+			src={poster}
+			alt=""
+			width={width}
+			decoding="async"
+			loading={isHero ? 'eager' : 'lazy'}
+			fetchpriority={isHero ? 'high' : priority >= 4 ? 'low' : 'auto'}
+		/>
 	{/if}
-	Your browser does not support HTML5 video.
-</video>
+
+	{#if !$prefersReducedMotion}
+		<!-- svelte-ignore a11y_media_has_caption -->
+		<video
+			bind:this={videoEl}
+			{width}
+			muted
+			playsinline
+			loop
+			autoplay={isHero}
+			preload={shouldLoad ? 'auto' : 'none'}
+			on:loadeddata={onVideoReady}
+			on:canplay={onCanPlay}
+			on:playing={onVideoReady}
+			on:error={releaseOnce}
+		>
+			{#if shouldLoad}
+				<source {src} type="video/mp4" />
+			{/if}
+		</video>
+	{/if}
+</div>
 
 <style lang="scss">
-	video {
-		@media (prefers-reduced-motion: reduce) {
-			display: none;
+	.decorative-media {
+		position: relative;
+		display: block;
+		overflow: hidden;
+		pointer-events: none;
+
+		.poster {
+			display: block;
+			width: 100%;
+			height: auto;
+			object-fit: cover;
+		}
+
+		video {
+			position: absolute;
+			inset: 0;
+			z-index: 1;
+			display: block;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			opacity: 0;
+			transition: opacity 0.35s ease;
+		}
+
+		&.ready video {
+			opacity: 1;
+		}
+
+		&:not(:has(.poster)) {
+			.poster {
+				display: none;
+			}
+
+			video {
+				position: relative;
+				inset: auto;
+				height: auto;
+				opacity: 1;
+			}
 		}
 	}
 </style>
