@@ -41,10 +41,12 @@
     display: flex;
     flex-direction: column;
     gap: 2rem;
-
+    padding: 4rem 0;
+    
     @media screen and (min-width: $breakpoint-max-medium) {
       flex-direction: row;
       margin-top: 8rem;
+      padding: 0;
     }
 
     div {
@@ -55,14 +57,12 @@
       }
 
       &.text-column {
-        order: -1;
         flex: 1 1 auto;
         margin: 0 1rem;
         font-size: var(--fluid-0);
         line-height: var(--fluid-2);
 
         @media screen and (min-width: $breakpoint-max-medium) {
-          order: 0;
           flex: 1 1 30%;
           margin: 0;
           font-size: var(--fluid-0);
@@ -70,13 +70,12 @@
         }
 
         h2 {
-          margin: 8rem 0 2rem;
+          margin: 0 0 2rem;
           font-size: var(--fluid-4);
           line-height: var(--fluid-5);
           text-align: center;
 
           @media screen and (min-width: $breakpoint-max-medium) {
-            margin: 0 0 2rem;
             font-size: var(--fluid-3);
             line-height: var(--fluid-5);
           }

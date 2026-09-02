@@ -54,6 +54,7 @@
     h1 {
       display: flex;
       flex-direction: column;
+      gap: var(--fluid-1);
       font-size: var(--fluid-3);
       line-height: var(--fluid-4);
 

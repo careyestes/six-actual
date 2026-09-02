@@ -33,8 +33,11 @@
   footer {
     position: relative;
     margin: 0;
-    padding: 4rem 0;
+    padding: 0 0 4rem;
     overflow: hidden;
+    @media screen and (min-width: $breakpoint-max-medium) {
+      padding: 4rem 0;
+    }
 
     :global(.decorative-media) {
       display: block;
@@ -63,11 +66,13 @@
       gap: 2rem;
       max-width: $container-max-width;
       margin: 0 auto;
-      padding: 8rem 4rem 0;
+      padding: 0 4rem 0;
       font-size: var(--fluid-7);
       line-height: var(--fluid-7);
       text-align: center;
-
+      @media screen and (min-width: $breakpoint-max-medium) {
+        padding: 8rem 4rem 0;
+      }
       small {
         @media screen and (min-width: $breakpoint-max-medium) {
           font-size: var(--fluid-4);
