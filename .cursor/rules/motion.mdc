@@ -1,0 +1,28 @@
+---
+description: How to retune site motion (hero 3D mark + section reveals) via prompts
+globs: src/lib/heroLogo*.js,src/lib/reveal*.js,src/lib/components/three/HeroLogo3D.svelte,src/lib/components/sections/**/*.svelte
+alwaysApply: false
+---
+
+# Motion retunes
+
+When the user asks to improve animation, edit **config first**, not the Three.js/GSAP engine.
+
+## Files
+
+| Concern | Edit |
+|---|---|
+| Hero A/B/C options (rise / assemble) | `src/lib/heroLogoMotion.js` — preview `?hero=A\|B\|C` |
+| Assemble order helpers | `src/lib/heroAssemble.js` |
+| Hero GSAP timeline structure | `src/lib/heroLogoTimeline.js` |
+| Section reveal timing | `src/lib/revealMotion.js` |
+| Reveal action (ScrollTrigger) | `src/lib/reveal.js` |
+
+## Rules
+
+- Prefer GSAP ease strings (`power2.out`, `power3.out`, `sine.inOut`). Avoid `expo.out` for long vertical rises.
+- Keep **one** Y-spin (`rotateY: -Math.PI * 2 → 0`) unless asked for more.
+- World-Y slide must start below the frustum (`rise.fromYFactor ≥ 1.2`).
+- Always respect `prefers-reduced-motion` (jump to rest / show final state).
+- Timeline labels: `blank` → `rise` → `fill` → `settle` → `idle`.
+- Do not reintroduce CSS transitions that fight GSAP inline styles on reveal targets.

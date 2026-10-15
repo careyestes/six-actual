@@ -1,47 +1,26 @@
-// Fonts
-@import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Kode+Mono:wght@400..700&display=swap');
+// Fonts — Inter Tight for display, Inter for UI/body, JetBrains Mono for labels
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
 
-$kode: "Kode Mono", monospace;
-$geist: "Geist", sans-serif;
-
-// Colors
-
-//  Green
-$green-400: #92EB9B;
-$green-600: #5A946A;
-$green-800: #12403C;
-
-// Red
-$red-100: rgb(255, 55, 78);
-$red-400: rgb(255, 0, 64);
-
-// Blue
-$blue-400: #3F74B1;
-$blue-800: #271240;
-$blue-900: #0E121B;
+$display: "Inter Tight", "Inter", -apple-system, sans-serif;
+$body: "Inter", -apple-system, sans-serif;
+$mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 
 // Neutrals
 $white: #fff;
-$grey-100: #eee;
-$grey-200: #ddd;
-$black: #000;
+$near-black: #08090a;
+$off-white: #fbfbfa;
+$ink: #101112;
 
-// Base / Surface Colors
-$foreground: $grey-200;
+// Accent — Six Actual green
+$accent: #92eb9b;
+$accent-deep: #2f7d3d;
 
-$background: $blue-900;
-$background-lines: $black;
-
-// Active Colors
-$primary-active: $green-400;
-$secondary-active: $red-400;
-
-
-// Borders
-$gradient-green: linear-gradient(to bottom, $green-600, $green-800);
-
-$border-radius: 1rem;
-
+// Radii — soft product surfaces, no longer brutalist squares
+$radius-sm: 8px;
+$radius: 14px;
+$radius-lg: 24px;
+$radius-pill: 999px;
+$border-radius: $radius;
 
 // Dimensions
 $breakpoint-max-extrasmall: 430px;
@@ -50,6 +29,9 @@ $breakpoint-max-medium: 960px;
 $breakpoint-max-large: 1500px;
 $breakpoint-max-extralarge: 2000px;
 
-$text-max-width: 960px;
-$container-max-width: $breakpoint-max-large;
+$text-max-width: 46rem;
+$container-max-width: 72rem;
+$page-gutter: clamp(1.25rem, 4vw, 2.5rem);
+$nav-height: 4rem;
 
+$ease-out: cubic-bezier(0.16, 1, 0.3, 1);
