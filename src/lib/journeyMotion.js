@@ -8,21 +8,25 @@
  *   t 0 → 1.5   camera dives into the shield's "6" counterspace (heroDive.progress 0 → 1)
  *   t 1.1       green panel fades in over the (now green) canvas
  *   t 1.5       headline builds on the green
- *   t 3.15      headline zooms (and turns) into the "i" in "decides" → black → next scene
- *   …           each scene: approach → hold → pass through the viewer
- *   t 6.2 → 7.8 pitch exit: baseplate rises into a block, camera zooms into it
- *   t 9.3 → 10.7 why exit: zoom into the blinking cursor → final scene
+ *   t 4.0       headline zooms (and turns) into the "i" in "decides" → black → next scene
+ *   …           each scene: approach → long sticky hold → pass through the viewer
+ *   t 8.6 → 10.2 pitch exit: baseplate rises into a block, camera zooms into it
+ *   t 13.0 → 14.4 why exit: zoom into the blinking cursor → final scene
  *
  * Prompt examples:
  *   "Make the dive into the 6 longer"       → raise `dive.end` and shift the rest later
- *   "Less scrolling between sections"       → lower `scrollPerUnit`
+ *   "Less scrolling between sections"       → lower `scrollPerUnit` (or shorten holds)
+ *   "Longer sticky stops between sections"  → raise holds / `scrollPerUnit`
  *   "Scenes should arrive from further away" → lower `sceneIn.fromScale`
  */
 export const journeyMotion = {
 	/** Timeline length (units). Must cover the last scene's hold. */
-	total: 12.4,
-	/** Viewport-heights of scrolling per timeline unit. */
-	scrollPerUnit: 0.65,
+	total: 16.8,
+	/**
+	 * Viewport-heights of scrolling per timeline unit. Higher = more physical scroll for the
+	 * same animation, so each sticky hold feels longer.
+	 */
+	scrollPerUnit: 0.9,
 	/** Seconds of scroll smoothing (ScrollTrigger scrub). */
 	scrub: 0.9,
 	/** The background grid scales 1 → 1 + gridZoom over the whole journey. */
@@ -50,9 +54,10 @@ export const journeyMotion = {
 	/**
 	 * Exit from the green headline: the text travels toward the screen, turns 90° counter-
 	 * clockwise and focuses into the "i" in "decides" until the screen is black.
+	 * Starts later so the finished headline holds before it leaves.
 	 */
 	heroOut: {
-		at: 3.15,
+		at: 4.0,
 		duration: 1.4,
 		rotate: -90,
 		/** Fraction of the zoom by which the rotation / re-centring are complete. */
@@ -71,22 +76,24 @@ export const journeyMotion = {
 	 * Scene order after the hero: Pitch, Why, Footer. `out: null` = stays.
 	 * Pitch leaves differently: its green baseplate rises into a solid block and the camera
 	 * pushes into it (`exit`), then Why arrives.
+	 * Each scene holds for roughly 3 timeline units (~2.7 viewport-heights of scroll) before
+	 * its exit starts, so it's harder to skip past a section.
 	 */
 	scenes: [
-		{ in: 4.7, exit: { at: 6.2, duration: 1.6 } },
+		{ in: 5.55, exit: { at: 8.6, duration: 1.6 } },
 		// Why is green: it fills in quickly (no shrink-from-depth on the background) while the
 		// green block is still on screen, and its text arrives a beat later.
 		{
-			in: 7.45,
+			in: 9.85,
 			fadeIn: 0.3,
 			fromScale: 1,
 			itemDelay: 0.4,
 			itemStagger: 0.07,
 			// Exit: push into the blinking cursor until it fills the screen.
-			zoom: { at: 9.3, duration: 1.4, cover: 1.15 }
+			zoom: { at: 13.0, duration: 1.4, cover: 1.15 }
 		},
 		// Last scene is the cursor's colour, so the zoom lands right in it.
-		{ in: 10.5, out: null, fadeIn: 0.25, fromScale: 1, itemDelay: 0.3 }
+		{ in: 14.2, out: null, fadeIn: 0.25, fromScale: 1, itemDelay: 0.3 }
 	],
 	sceneIn: {
 		duration: 0.85,
